@@ -4,6 +4,7 @@ from mincly.io.common import (
     Writer as _Writer,
     SupportsWrite as _SupportsWrite,
 )
+import typing as _t
 
 
 class AnsiTerminalWriter(_Writer):
@@ -15,26 +16,21 @@ class AnsiTerminalWriter(_Writer):
         self,
         add_newline_to_prints: bool = False,
         always_flush: bool = True,
-        output_to: _SupportsWrite = None,
+        output_to: _t.Optional[_SupportsWrite] = None,
     ) -> None:
-        self.__last_printed_content: str = ""
-        self.__print_options = {}
-        self.__print_options["end"] = "\n" if add_newline_to_prints else ""
+        self._last_printed_content: str = ""
+        self._print_options = {}
+        self._print_options["end"] = "\n" if add_newline_to_prints else ""
         if always_flush:
-            self.__print_options["flush"] = True
+            self._print_options["flush"] = True
         if output_to is not None:
-            self.__print_options["file"] = output_to
+            self._print_options["file"] = output_to
 
     def output(self, value: str):
         """Prints message to terminal. Avoid using ANSI control sequence
         characters in `value`"""
-        self.__last_printed_content += value + self.__print_options["end"]
-        print(value, **self.__print_options)
-
-    def print_overwrite(self, value: str):
-        """Clears printed contents and prints `value`"""
-        self.clear()
-        self.print(value)
+        self._last_printed_content += value + self._print_options["end"]
+        print(value, **self._print_options)
 
     def clear_last_n_lines(self, n: int):
         """Clears last `n` lines in terminal. Does not change internal printed
@@ -51,10 +47,10 @@ class AnsiTerminalWriter(_Writer):
     def clear(self):
         """Clears all content that this class printed. Does not account for
         printed content from other sources"""
-        if self.__last_printed_content is None:
+        if self._last_printed_content is None:
             return
         terminal_width = _os.get_terminal_size().columns
-        printed_lines = self.__last_printed_content.split("\n")
+        printed_lines = self._last_printed_content.split("\n")
         number_of_lines_in_terminal = 0
         for printed_line in printed_lines:
             number_of_lines_in_terminal += 1
@@ -63,7 +59,7 @@ class AnsiTerminalWriter(_Writer):
                 number_of_lines_in_terminal += 1
                 remaining_string = remaining_string[terminal_width:]
         self.clear_last_n_lines(number_of_lines_in_terminal)
-        self.__last_printed_content = ""
+        self._last_printed_content = ""
 
 
 class AnsiTerminalIo(AnsiTerminalWriter, _Reader):
@@ -79,5 +75,5 @@ class AnsiTerminalIo(AnsiTerminalWriter, _Reader):
         account the user's input and newline character (ENTER) for the next call
         to `clear()`."""
         user_input = input()
-        self.__last_printed_content += user_input + "\n"
+        self._last_printed_content += user_input + "\n"
         return user_input

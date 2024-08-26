@@ -1,6 +1,6 @@
 import typing as _t
 from .common import Screen as _Screen
-from ..utils.result import Err as _Err, Ok as _Ok, Result as _Result
+from ..utils.result import Result as _Result
 
 _T = _t.TypeVar("_T")
 
@@ -20,20 +20,20 @@ class OptionScreen(_Screen[_T]):
 
     def process_input(self, user_input: str) -> _Result[_T]:
         if len(user_input) < 1:
-            return _Err("Empty input")
+            return _Result[_T].Err("Empty input")
 
         if user_input.isdecimal():
             nth_option = int(user_input) - 1
             if nth_option < 0 or nth_option >= len(self.numbered_options):
-                return _Err(f"Invalid numbered option '{user_input}'")
+                return _Result[_T].Err(f"Invalid numbered option '{user_input}'")
             _, option = self.numbered_options[nth_option]
-            return _Ok(option)
+            return _Result[_T].Ok(option)
 
         _, option = self.keyword_options.get(user_input, ("", None))
         if option is None:
-            return _Err(f"Invalid keyword option '{user_input}'")
+            return _Result[_T].Err(f"Invalid keyword option '{user_input}'")
 
-        return _Ok(option)
+        return _Result[_T].Ok(option)
 
     def get_display_string(self) -> str:
         display_string = f"{self.header}\n"

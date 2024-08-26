@@ -1,7 +1,7 @@
 import re as _re
 import typing as _t
 from .common import Screen as _Screen
-from ..utils.result import Err as _Err, Ok as _Ok, Result as _Result
+from ..utils.result import Result as _Result
 
 
 class ConfirmScreen(_Screen[bool]):
@@ -22,8 +22,12 @@ class ConfirmScreen(_Screen[bool]):
 
     def process_input(self, user_input: str) -> _Result[bool]:
         if self.true_regex.match(user_input):
-            return _Ok(True)
+            return _Result[bool].Ok(True)
         elif len(user_input) < 1:
-            return _Err("Empty input") if self.default is None else _Ok(self.default)
+            return (
+                _Result[bool].Err("Empty input")
+                if self.default is None
+                else _Result[bool].Ok(self.default)
+            )
         else:
-            return _Ok(False)
+            return _Result[bool].Ok(False)

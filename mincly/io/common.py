@@ -21,6 +21,13 @@ class Writer(SupportsWrite):
         """Clears output (e.g. by removing printed content)"""
         raise NotImplementedError()
 
+    def print_overwrite(self, value: str):
+        """
+        Clears printed contents and prints `value`
+        """
+        self.clear()
+        self.write(value)
+
 
 class Io(Reader, Writer):
     pass
@@ -28,14 +35,14 @@ class Io(Reader, Writer):
 
 class HybridIo(Io):
     def __init__(self, input: Reader, output: Writer) -> None:
-        self.__in = input
-        self.__out = output
+        self._in = input
+        self._out = output
 
     def write(self, message: str):
-        return self.__out.write(message)
+        return self._out.write(message)
 
     def clear(self):
-        return self.__out.clear()
+        return self._out.clear()
 
     def read(self) -> str:
-        return self.__in.read()
+        return self._in.read()

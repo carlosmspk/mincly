@@ -9,18 +9,19 @@ from mincly.io.standard import (
     StandardTerminalWriter as _StandardTerminalWriter,
     StandardTerminalIo as _StandardTerminalIo,
 )
+import typing as _t
 
 
 class Menu:
     def __init__(
         self,
-        input_output: _Io = None,
-        input: _Reader = None,
-        output: _Writer = None,
+        input_output: _t.Optional[_Io] = None,
+        input: _t.Optional[_Reader] = None,
+        output: _t.Optional[_Writer] = None,
     ) -> None:
-        self.__io: _Io
+        self._io: _Io
         if input_output is not None:
-            self.__io = input_output
+            self._io = input_output
         elif input is not None or output is not None:
             input_or_standard = (
                 input if input is not None else _StandardTerminalReader()
@@ -28,6 +29,6 @@ class Menu:
             output_or_standard = (
                 output if output is not None else _StandardTerminalWriter()
             )
-            self.__io = _HybridIo(input_or_standard, output_or_standard)
+            self._io = _HybridIo(input_or_standard, output_or_standard)
         else:
-            self.__io = _StandardTerminalIo()
+            self._io = _StandardTerminalIo()
