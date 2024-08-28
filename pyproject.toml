@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mincly"
-version = "0.1.7"
+version = "0.1.9"
 description = ""
 authors = ["carlosmspk <carlosmspk@gmail.com>"]
 license = "MIT"
