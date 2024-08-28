@@ -3,7 +3,7 @@ from .common import Writer as _Writer, Reader as _Reader, HybridIo as _HybridIo
 
 class StandardTerminalWriter(_Writer):
     """
-    Basic output to terminal. `output()` is Python's builtin `print()` and
+    Basic output to terminal. `write()` is Python's builtin `print()` and
     `clear()` prints empty lines to create separation
     """
 

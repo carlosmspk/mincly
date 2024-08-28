@@ -1,10 +1,5 @@
 import os as _os
-from mincly.io.common import (
-    Reader as _Reader,
-    Writer as _Writer,
-    SupportsWrite as _SupportsWrite,
-)
-import typing as _t
+from mincly.io.common import Io as _Io, Writer as _Writer
 
 
 class AnsiTerminalWriter(_Writer):
@@ -13,24 +8,17 @@ class AnsiTerminalWriter(_Writer):
     properly, this must be the only source of printed content."""
 
     def __init__(
-        self,
-        add_newline_to_prints: bool = False,
-        always_flush: bool = True,
-        output_to: _t.Optional[_SupportsWrite] = None,
+        self, add_newline_to_prints: bool = False, always_flush: bool = True
     ) -> None:
         self._last_printed_content: str = ""
-        self._print_options = {}
-        self._print_options["end"] = "\n" if add_newline_to_prints else ""
-        if always_flush:
-            self._print_options["flush"] = True
-        if output_to is not None:
-            self._print_options["file"] = output_to
+        self._print_end = "\n" if add_newline_to_prints else ""
+        self._print_flush = always_flush
 
-    def output(self, value: str):
+    def write(self, message: str):
         """Prints message to terminal. Avoid using ANSI control sequence
         characters in `value`"""
-        self._last_printed_content += value + self._print_options["end"]
-        print(value, **self._print_options)
+        self._last_printed_content += message + self._print_end
+        print(message, end=self._print_end, flush=self._print_flush)
 
     def clear_last_n_lines(self, n: int):
         """Clears last `n` lines in terminal. Does not change internal printed
@@ -47,7 +35,7 @@ class AnsiTerminalWriter(_Writer):
     def clear(self):
         """Clears all content that this class printed. Does not account for
         printed content from other sources"""
-        if self._last_printed_content is None:
+        if self._last_printed_content == "":
             return
         terminal_width = _os.get_terminal_size().columns
         printed_lines = self._last_printed_content.split("\n")
@@ -62,15 +50,15 @@ class AnsiTerminalWriter(_Writer):
         self._last_printed_content = ""
 
 
-class AnsiTerminalIo(AnsiTerminalWriter, _Reader):
+class AnsiTerminalIo(AnsiTerminalWriter, _Io):
     """For ANSI compliant terminals, everything outputed to this terminal is
     stored and can be cleared and overwritten at any type. For it to work
     properly, this must be the only source of printed content.
 
-    `get_input()` method is counted towards printed content for the purposes of
+    `read()` method is counted towards printed content for the purposes of
     `clear`ing the terminal."""
 
-    def get_input(self) -> str:
+    def read(self) -> str:
         """Retrieves input using Python's builtin `input` method. Takes into
         account the user's input and newline character (ENTER) for the next call
         to `clear()`."""

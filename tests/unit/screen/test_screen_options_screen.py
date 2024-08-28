@@ -1,8 +1,8 @@
 import unittest
-from mincly.screen.option_screen import OptionScreen
+from mincly.screen.option_screen import SelectScreen
 
 
-class OptionScreenTest(unittest.TestCase):
+class SelectScreenTest(unittest.TestCase):
     def test(self):
         raise NotImplementedError()
 

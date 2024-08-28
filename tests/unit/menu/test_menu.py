@@ -1,5 +1,5 @@
 import unittest
-from mincly.menu.common import Menu
+from mincly.menu import Menu
 
 
 class MenuTest(unittest.TestCase):
