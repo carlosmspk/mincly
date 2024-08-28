@@ -1,3 +1,3 @@
-from mincly.io import *
-from mincly.menu import *
-from mincly.screen import *
+from .io import *
+from .menu import *
+from .screen import *

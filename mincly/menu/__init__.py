@@ -54,7 +54,7 @@ class Menu:
                 output if output is not None else _StandardTerminalWriter()
             )
             self._io = _HybridIo(input_or_standard, output_or_standard)
-        self._screen_stack: _t.List[_Screen] = []
+        self._screen_stack: _t.List[_Screen[_t.Any]] = []
         self._last_input: _t.Any = None
 
     def show(self, message: str):
@@ -101,7 +101,7 @@ class Menu:
         Provided screen is not added to screen stack and will not be stored by
         this `Menu` instance.
         """
-        screen_result: _t.Union[_Result, None] = None
+        screen_result: _t.Union[_Result[_T], None] = None
 
         while screen_result is None or screen_result.is_err():
             self._io.print_overwrite(screen.get_display_string())
@@ -112,8 +112,9 @@ class Menu:
             user_input = self._io.read()
 
             screen_result = screen.process_input(user_input)
-        self._last_input = screen_result.unwrap()
-        return self._last_input
+        result_value = screen_result.unwrap()
+        self._last_input = result_value
+        return result_value
 
     def current_screen_name(self) -> _t.Union[str, None]:
         return self._screen_stack[-1].name
