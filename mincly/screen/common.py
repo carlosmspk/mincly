@@ -1,6 +1,6 @@
 from abc import ABC as _Abstract, abstractmethod as abstract
 import typing as _t
-from ..utils.result import Result as _Result
+from capyutils import Result as _Result
 
 _T = _t.TypeVar("_T")
 

@@ -11,7 +11,7 @@ from mincly.io.standard import (
 import typing as _t
 from ..io import Io as _Io, Reader as _Reader, Writer as _Writer
 from ..screen import Screen as _Screen
-from ..utils.result import Result as _Result
+from capyutils import Result as _Result
 
 _T = _t.TypeVar("_T")
 
@@ -104,6 +104,9 @@ class Menu:
         screen_result: _t.Union[_Result[_T], None] = None
 
         while screen_result is None or screen_result.is_err():
+
+            if isinstance(screen_result, _Result):
+                screen_result.is_err()
             self._io.print_overwrite(screen.get_display_string())
 
             if screen_result is not None and screen_result.is_err():
